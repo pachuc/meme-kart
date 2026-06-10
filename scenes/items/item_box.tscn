@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/item_box.gd" id="1_ib"]
+
+[sub_resource type="BoxShape3D" id="shape_box"]
+size = Vector3(1.6, 2, 1.6)
+
+[sub_resource type="StandardMaterial3D" id="mat_box"]
+transparency = 1
+albedo_color = Color(0.35, 0.55, 0.95, 0.55)
+emission_enabled = true
+emission = Color(0.2, 0.3, 0.6, 1)
+
+[node name="ItemBox" type="Area3D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_ib")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("shape_box")
+
+[node name="Visual" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+size = Vector3(1.1, 1.1, 1.1)
+material = SubResource("mat_box")

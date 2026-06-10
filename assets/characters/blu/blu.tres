@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CharacterDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/defs/character_def.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/characters/blu/sheet.png" id="2"]
+[ext_resource type="JSON" path="res://assets/characters/blu/sheet.json" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"blu"
+display_name = "Blu"
+sprite_sheet = ExtResource("2")
+aseprite_json = ExtResource("3")
+mirror_sprites = false
+sprite_pixel_size = 0.045
+sprite_y_offset = 0.0
+speed_mod = 1.0
+accel_mod = 1.0
+handling_mod = 1.0
+weight = 1.0

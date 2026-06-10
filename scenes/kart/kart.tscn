@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/kart/kart_controller.gd" id="1_kc"]
+[ext_resource type="Script" path="res://scripts/sprites/billboard_sprite.gd" id="2_bs"]
+
+[sub_resource type="SphereShape3D" id="shape_body"]
+radius = 0.5
+
+[node name="Kart" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_kc")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("shape_body")
+
+[node name="Sprite" type="Sprite3D" parent="."]
+script = ExtResource("2_bs")
