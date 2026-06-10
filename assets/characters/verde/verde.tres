@@ -12,7 +12,6 @@ sprite_sheet = ExtResource("2")
 aseprite_json = ExtResource("3")
 mirror_sprites = true
 sprite_pixel_size = 0.045
-sprite_y_offset = 0.0
 speed_mod = 0.92
 accel_mod = 1.15
 handling_mod = 1.1

@@ -1,15 +1,17 @@
 extends Node3D
-## Dev scene: one billboard kart sprite at the origin, camera orbiting
-## around it. Used to verify the 8-direction frame selection.
+## Dev scene: one composed kart+rider billboard at the origin, camera
+## orbiting around it. Used to verify the 8-direction frame selection
+## and the rider's seat placement on every kart.
 ## Drive from MCP/game_eval: set_orbit(deg), set_anim(name),
-## set_character(id), get_state().
+## set_character(id), set_kart(id), get_state().
 
 @export var character_id: StringName = &"rosso"
+@export var kart_id: StringName = &"standard"
 @export var auto_orbit: bool = false
 @export var orbit_speed_deg: float = 20.0
 
 var orbit_deg: float = 0.0
-var _sprite: BillboardSprite
+var _visual: KartVisual
 var _kart_root: Node3D
 var _cam: Camera3D
 
@@ -36,15 +38,16 @@ func _ready() -> void:
 	_kart_root = Node3D.new()
 	_kart_root.name = "Kart"
 	add_child(_kart_root)
-	_sprite = BillboardSprite.new()
-	_kart_root.add_child(_sprite)
+	_visual = KartVisual.new()
+	_visual.facing_node = _kart_root
+	_kart_root.add_child(_visual)
 
 	_cam = Camera3D.new()
 	add_child(_cam)
 	_update_camera()
 	_cam.make_current()
 
-	set_character(character_id)
+	_apply()
 
 
 func _process(delta: float) -> void:
@@ -66,18 +69,36 @@ func set_orbit(deg: float) -> void:
 
 
 func set_anim(anim: String) -> void:
-	_sprite.anim = anim
+	_visual.anim = anim
 
 
 func set_character(id: StringName) -> bool:
-	var def: CharacterDef = Registry.get_character(id)
-	if def == null:
+	if Registry.get_character(id) == null:
 		push_error("Turntable: unknown character '%s'" % id)
 		return false
 	character_id = id
-	_sprite.setup(def)
-	_sprite.anim = "idle"
+	_apply()
 	return true
+
+
+func set_kart(id: StringName) -> bool:
+	if Registry.get_kart(id) == null:
+		push_error("Turntable: unknown kart '%s'" % id)
+		return false
+	kart_id = id
+	_apply()
+	return true
+
+
+func _apply() -> void:
+	var character: CharacterDef = Registry.get_character(character_id)
+	var kart: KartDef = Registry.get_kart(kart_id)
+	if character == null or kart == null:
+		push_error("Turntable: missing character or kart def")
+		return
+	var anim := _visual.anim
+	_visual.setup(character, kart)
+	_visual.anim = anim if anim != "" else "idle"
 
 
 ## Camera at orbit angle th means expected dir = DIRS[wrap(-th)/45].
@@ -85,10 +106,15 @@ func get_state() -> Dictionary:
 	var expected: String = BillboardSprite.DIRS[int(round(wrapf(-orbit_deg, 0.0, 360.0) / 45.0)) % 8]
 	return {
 		"character": character_id,
-		"anim": _sprite.anim,
+		"kart": kart_id,
+		"anim": _visual.anim,
 		"orbit_deg": orbit_deg,
-		"shown_dir": _sprite._dir,
+		"shown_dir": _visual.kart_layer._dir,
+		"rider_dir": _visual.rider_layer._dir,
 		"expected_dir": expected,
-		"flip_h": _sprite.flip_h,
-		"region": _sprite.region_rect,
+		"kart_flip": _visual.kart_layer.flip_h,
+		"rider_flip": _visual.rider_layer.flip_h,
+		"kart_region": _visual.kart_layer.region_rect,
+		"rider_region": _visual.rider_layer.region_rect,
+		"rider_pos": _visual.rider_layer.global_position,
 	}

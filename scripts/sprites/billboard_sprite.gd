@@ -30,21 +30,29 @@ var _frame := 0
 var _time_ms := 0.0
 
 
-func setup(character: CharacterDef) -> void:
-	_sheet = AsepriteSheet.load_sheet(character.aseprite_json)
-	texture = character.sprite_sheet
-	pixel_size = character.sprite_pixel_size
+## One billboard layer showing one sheet (a kart or a rider). The caller
+## owns placement; a frame's bottom edge sits at position.y - half_height_m().
+func setup(json: JSON, sheet_texture: Texture2D, p_pixel_size: float) -> void:
+	_sheet = AsepriteSheet.load_sheet(json)
+	texture = sheet_texture
+	pixel_size = p_pixel_size
 	billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 	texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	shaded = false
 	alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 	region_enabled = true
-	# The sheet bakes a blob shadow; a real projected sprite shadow on top
+	# Sheets bake a blob shadow; a real projected sprite shadow on top
 	# looks wrong, MK64 style is shadowless billboards.
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	if _sheet != null:
-		position.y = character.sprite_y_offset + _sheet.frame_size.y * pixel_size * 0.5
+	_resolved_key = ""
 	_refresh()
+
+
+## World half-height of one frame in meters (Sprite3D draws centered).
+func half_height_m() -> float:
+	if _sheet == null:
+		return 0.0
+	return _sheet.frame_size.y * pixel_size * 0.5
 
 
 func _ready() -> void:

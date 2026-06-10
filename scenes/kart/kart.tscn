@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/kart/kart_controller.gd" id="1_kc"]
-[ext_resource type="Script" path="res://scripts/sprites/billboard_sprite.gd" id="2_bs"]
+[ext_resource type="Script" path="res://scripts/sprites/kart_visual.gd" id="2_kv"]
 
 [sub_resource type="SphereShape3D" id="shape_body"]
 radius = 0.5
@@ -15,5 +15,5 @@ script = ExtResource("1_kc")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("shape_body")
 
-[node name="Sprite" type="Sprite3D" parent="."]
-script = ExtResource("2_bs")
+[node name="Visual" type="Node3D" parent="."]
+script = ExtResource("2_kv")

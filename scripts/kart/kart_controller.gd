@@ -45,7 +45,7 @@ var boost_timer: float = 0.0
 var boost_top_mult: float = 1.0
 var spin_timer: float = 0.0
 
-@onready var sprite: BillboardSprite = $Sprite
+@onready var visual: KartVisual = $Visual
 
 var _engine_audio: AudioStreamPlayer3D
 
@@ -68,7 +68,7 @@ func _ready() -> void:
 	steer_speed = kart_def.steer_speed * character.handling_mod
 	steer_falloff = kart_def.steer_speed_falloff
 	weight = character.weight
-	sprite.setup(character)
+	visual.setup(character, kart_def)
 
 	_engine_audio = AudioStreamPlayer3D.new()
 	_engine_audio.stream = SoundFx.engine_loop
@@ -182,15 +182,15 @@ func _update_boost(delta: float) -> void:
 
 func _update_sprite() -> void:
 	if spin_timer > 0.0:
-		sprite.anim = "spin"
+		visual.anim = "spin"
 	elif drift_dir != 0:
-		sprite.anim = "drift_l" if drift_dir < 0 else "drift_r"
+		visual.anim = "drift_l" if drift_dir < 0 else "drift_r"
 	elif absf(speed) > 0.5:
-		sprite.anim = "drive"
-		sprite.speed_scale = clampf(absf(speed) / top_speed * 1.5, 0.5, 1.8)
+		visual.anim = "drive"
+		visual.speed_scale = clampf(absf(speed) / top_speed * 1.5, 0.5, 1.8)
 	else:
-		sprite.anim = "idle"
-		sprite.speed_scale = 1.0
+		visual.anim = "idle"
+		visual.speed_scale = 1.0
 
 
 ## Mushrooms and mini-turbos.

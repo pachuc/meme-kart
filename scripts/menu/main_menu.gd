@@ -44,10 +44,10 @@ func _ready() -> void:
 
 	_char_list = _column(columns, "CHARACTER")
 	for c in _chars:
-		_char_list.add_item(c.display_name, _portrait(c))
+		_char_list.add_item(c.display_name, _portrait(c.icon, c.aseprite_json, c.sprite_sheet))
 	_kart_list = _column(columns, "KART")
 	for k in _karts:
-		_kart_list.add_item(k.display_name)
+		_kart_list.add_item(k.display_name, _portrait(k.icon, k.aseprite_json, k.sprite_sheet))
 	_track_list = _column(columns, "TRACK")
 	for t in _tracks:
 		_track_list.add_item(t.display_name, t.preview)
@@ -101,17 +101,17 @@ func _column(parent: Control, label_text: String) -> ItemList:
 
 
 ## Menu portrait: explicit icon, or the first idle_s frame of the sheet.
-func _portrait(c: CharacterDef) -> Texture2D:
-	if c.icon != null:
-		return c.icon
-	var sheet := AsepriteSheet.load_sheet(c.aseprite_json)
-	if sheet == null or c.sprite_sheet == null:
+func _portrait(icon: Texture2D, json: JSON, sheet_tex: Texture2D) -> Texture2D:
+	if icon != null:
+		return icon
+	var sheet := AsepriteSheet.load_sheet(json)
+	if sheet == null or sheet_tex == null:
 		return null
 	var anim := sheet.get_anim("idle", "s")
 	if anim.frames.is_empty():
 		return null
 	var tex := AtlasTexture.new()
-	tex.atlas = c.sprite_sheet
+	tex.atlas = sheet_tex
 	tex.region = anim.frames[0].rect
 	return tex
 

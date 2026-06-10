@@ -72,8 +72,12 @@ godot --headless --path . --script res://scripts/tools/gen_track.gd
 ### 1. Draw
 
 One Aseprite file, any canvas size (placeholders use 32×32; 48×48 or 64×64
-look great too — all frames must be the same size). The character sits in
-their kart, drawn from up to 8 viewing directions:
+look great too — all frames must be the same size). Characters and karts
+are **separate, composable sheets**: the character sheet is the rider only
+(seated pose, no kart, no shadow, bottom-center of the frame = seat contact
+point) and karts have their own sheets (see
+[docs/kart-art-guide.md](docs/kart-art-guide.md)), so any character can
+ride any kart. Drawn from up to 8 viewing directions:
 
 ```
         n  (back view — what you see driving)
@@ -127,7 +131,6 @@ right-click the folder → New Resource → CharacterDef, then fill it in:
 | `aseprite_json` | your `sheet.json` |
 | `mirror_sprites` | `true` if you drew 5 directions |
 | `sprite_pixel_size` | world meters per sprite pixel (0.045 for 32px sprites; halve it for 64px) |
-| `sprite_y_offset` | extra height above the kart origin |
 | `icon` | optional menu portrait (falls back to the `idle_s` frame) |
 | `speed_mod` / `accel_mod` / `handling_mod` | 0.7–1.3 multipliers on the kart's stats |
 | `weight` | spin-out recovery / bump exchange |
@@ -136,9 +139,16 @@ Run the game — the character appears in the menu and the AI roster.
 
 ## Adding a kart
 
-Create `assets/karts/<name>.tres` (New Resource → KartDef). All handling
-lives here: `top_speed` (m/s), `acceleration`, `braking`, `reverse_speed`,
-`steer_speed`, `steer_speed_falloff`, `grip`, `drift_steer_min/max`,
+Karts have their own sprite sheet (chassis + wheels + blob shadow, no
+rider) drawn with the same Aseprite workflow — see
+[docs/kart-art-guide.md](docs/kart-art-guide.md). Create
+`assets/karts/<name>/<name>.tres` (New Resource → KartDef) next to its
+`sheet.png`/`sheet.json` and fill in the sprite fields (same as a
+character) plus the per-direction `seat_n`…`seat_s` anchors — the pixel
+offset from the kart frame's bottom-center where the rider's frame
+bottom-center is pinned. All handling lives here too: `top_speed` (m/s),
+`acceleration`, `braking`, `reverse_speed`, `steer_speed`,
+`steer_speed_falloff`, `grip`, `drift_steer_min/max`,
 `mini_turbo_threshold` (seconds of drift to charge), `boost_strength`
 (top-speed multiplier), `boost_duration`. Character mods multiply on top.
 
